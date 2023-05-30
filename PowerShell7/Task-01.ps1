@@ -4,7 +4,7 @@ Import-Module .\dell.apex.psm1 -Force
 $org = 'MyOrg'
 
 # CONNECT TO THE APEX API
-connect-restapi
+connect-restapi -Uri "apis-us0.druva.com" -Endpoint "phoenix"
 
 # GET THE ORG
 $query = get-org -Org $org

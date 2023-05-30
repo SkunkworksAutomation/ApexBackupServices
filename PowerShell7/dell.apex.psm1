@@ -7,7 +7,12 @@ $global:AuthObject = $null
 
 function connect-restapi {
     [CmdletBinding()]
-    param ()
+    param (
+        [Parameter( Mandatory=$true)]
+        [string]$Uri,
+        [Parameter( Mandatory=$true)]
+        [string]$Endpoint
+    )
     begin {
         # CHECK TO SEE IF OAUTH2 CREDS FILE EXISTS IF NOT CREATE ONE
         $exists = Test-Path -Path ".\oauth2.xml" -PathType Leaf
@@ -32,7 +37,7 @@ function connect-restapi {
     process {
         #AUTHENTICATE TO THE AVAMAR API 
         $auth = Invoke-RestMethod `
-        -Uri "https://apis-us0.druva.com/token" `
+        -Uri "$($Uri)/token" `
         -Method POST `
         -ContentType 'application/x-www-form-urlencoded' `
         -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)} `
@@ -41,7 +46,7 @@ function connect-restapi {
 
         #BUILD THE AUTHOBJECT FOR SUBESEQUENT REST API CALLS
         $object = @{
-            server ="https://apis-us0.druva.com/phoenix"
+            server ="$($Uri)/$($Endpoint)"
             token= @{
                 authorization="Bearer $($auth.access_token)"
             } #END TOKEN
@@ -56,7 +61,7 @@ function connect-restapi {
 function get-org {
     [CmdletBinding()]
     param (
-        [Parameter( Mandatory=$false)]
+        [Parameter( Mandatory=$true)]
         [string]$Org
     )
     begin {}
